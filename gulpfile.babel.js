@@ -8,7 +8,7 @@ import autoprefixer from "gulp-autoprefixer";
 import csso from "gulp-csso";
 import bro from "gulp-bro";
 import babelify from "babelify";
-import ghPages from "gulp-gh-pages";
+import ghPages from "gulp-gh-pages-with-updated-gift";
 
 sass.compiler = require("node-sass");
 
@@ -42,7 +42,7 @@ const watch = () => {
 	gulp.watch(routes.js.watch, js);
 };
 
-const clean = () => del(["build/"]);
+const clean = () => del(["build/", ".publish"]);
 
 const pug = () => gulp.src(routes.pug.src).pipe(gpug()).pipe(gulp.dest(routes.pug.dest));
 
@@ -77,7 +77,8 @@ const js = () =>
 		)
 		.pipe(gulp.dest(routes.js.dest));
 
-const git = () => gulp.src("build/**/*").pipe(ghPages());
+const git = () =>
+	gulp.src("build/**/*").pipe(ghPages({ remoteUrl: "https://github.com/HyoJip/gulp.git" }));
 
 // TASKS
 const prepare = gulp.series([clean]);
@@ -93,4 +94,4 @@ export const build = gulp.series([prepare, assets]);
 
 export const dev = gulp.series([build, render]);
 
-export const deploy = gulp.series([build, uploadPage]);
+export const deploy = gulp.series([build, uploadPage, prepare]);
